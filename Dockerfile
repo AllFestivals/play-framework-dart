@@ -1,21 +1,23 @@
-FROM ingensi/play-framework
+FROM google/dart
 
 MAINTAINER Jakub Uhrik <jakuub@bookyourself.com>
 
-ENV DART_VERSION 1.12.2
+# ENV PLAY_VERSION 2.2.3
+ENV ACTIVATOR_VERSION 1.3.6
+# ENV PATH $PATH:/opt/play-$PLAY_VERSION
+ENV PATH $PATH:/opt/activator-dist-$ACTIVATOR_VERSION
 
-RUN apt-get -q update && apt-get install --no-install-recommends -y -q curl git ca-certificates apt-transport-https
-RUN curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-  curl https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list && \
-  curl https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_unstable.list > /etc/apt/sources.list.d/dart_unstable.list && \
-  apt-get update && \
-  apt-get install dart=$DART_VERSION-1 && \
-  rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y unzip openjdk-7-jdk
+# ADD http://downloads.typesafe.com/play/$PLAY_VERSION/play-$PLAY_VERSION.zip /tmp/play-$PLAY_VERSION.zip
+ADD https://downloads.typesafe.com/typesafe-activator/$ACTIVATOR_VERSION/typesafe-activator-$ACTIVATOR_VERSION.zip /tmp/typesafe-activator-$ACTIVATOR_VERSION.zip
+# RUN (cd /opt && unzip /tmp/play-$PLAY_VERSION.zip && rm -f /tmp/play-$PLAY_VERSION.zip)
+RUN (cd /opt && unzip /tmp/typesafe-activator-$ACTIVATOR_VERSION && \
+	rm -f /tmp/typesafe-activator-$ACTIVATOR_VERSION.zip)
 
-ENV DART_SDK /usr/lib/dart
-ENV PATH $DART_SDK/bin:$PATH
+WORKDIR /app
+EXPOSE 9000 
 
-WORKDIR /data
+
 
 # Define default command.
 CMD ["bash"]
